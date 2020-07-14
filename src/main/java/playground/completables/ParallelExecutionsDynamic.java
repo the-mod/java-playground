@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-public class ParallelExecutions {
+public class ParallelExecutionsDynamic {
 
     public static void executeOnPool() throws ExecutionException, InterruptedException {
         BasicThreadFactory factory =  new BasicThreadFactory.Builder()
@@ -30,13 +30,14 @@ public class ParallelExecutions {
         List<CompletableFuture<String>> tasks = input
                 .parallelStream()
                 .peek((c) -> {
-                    System.out.println("Now I am processed by: " +  Thread.currentThread().getName());
+                    System.out.println("Now Task #"+c+" processed by: " +  Thread.currentThread().getName());
                 })
                 .map(entry -> CompletableFuture.supplyAsync(() -> {
                     System.out.println("I am Task #"+entry+" executed by: " +  Thread.currentThread().getName());
                     try {
                         // TODO is Thread.sleep sending thread to background and contine with others?
-                        Thread.sleep(30000);
+                        // run Threads with dynamic timeouts
+                        Thread.sleep(entry * 1000);
                         System.out.println("Done with Task #"+entry+" executed by: " +  Thread.currentThread().getName());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -59,10 +60,12 @@ public class ParallelExecutions {
 
         System.out.println(strings);
         swPool.stop();
+        // TODO why it takes still 30 seconds
+        // TODO why tasks with earlier timeout finishes after ones with later timeout?
         System.out.println("Done in " + swPool.getTime() + "ms " +  Thread.currentThread().getName());
     }
 
     public static void main(String[] args) throws ExecutionException, InterruptedException {
-        ParallelExecutions.executeOnPool();
+        ParallelExecutionsDynamic.executeOnPool();
     }
 }
