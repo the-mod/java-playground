@@ -11,28 +11,52 @@ import java.util.concurrent.TimeUnit;
 public class FluxMono {
 
     private static Mono<Integer> doSomething(int i) {
-        System.out.println(Thread.currentThread().getName() + " - Processing " + i);
+        System.out.println(Thread.currentThread().getName() + " - Processing Input: " + i);
         try {
             TimeUnit.MILLISECONDS.sleep(1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return Mono.just(i);
+        return Mono.just(i*i);
+    }
+
+    private static void runSequential() {
+        Flux.range(1, 10)
+                .doOnSubscribe((unused) -> System.out.println("Got a subscriber"))
+                .flatMap(i -> doSomething(i))
+                .doOnNext(result -> System.out.println(Thread.currentThread().getName() + " - Done Processing: " + result))
+                .doOnComplete(() -> System.out.println(Thread.currentThread().getName() + " - Done Execution"))
+                .subscribe((i) -> {
+                    System.out.println(Thread.currentThread().getName() + " - Got Result: " + i);
+                });
+    }
+
+    private static void runParallel() {
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        Flux.range(1, 100)
+                .doOnSubscribe((unused) -> System.out.println("Got a subscriber"))
+                .parallel()
+                .runOn(Schedulers.fromExecutorService(executorService))
+                .flatMap(i -> doSomething(i))
+                .doOnNext(result -> System.out.println(Thread.currentThread().getName() + " - Done Processing: " + result))
+                .doOnComplete(() -> System.out.println(Thread.currentThread().getName() + " - Done Execution"))
+                .doOnTerminate(() -> {
+                    System.out.println(Thread.currentThread().getName() + " - Terminating");
+                })
+                .sequential()
+                .subscribe((i) -> {
+                    System.out.println(Thread.currentThread().getName() + " - Got Result: " + i);
+                }, (err) -> {
+                    System.err.println("Error " + err.getMessage());
+                }, () -> {
+                    System.out.println(Thread.currentThread().getName() + " - Shutting down Executor Service");
+                    executorService.shutdown();
+                });
+
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
-        Flux.range(1, 10)
-                .doOnSubscribe((unused) -> System.out.println("Got a subscriber"))
-                //.subscribeOn(Schedulers.newParallel("custom", 10))
-                .subscribeOn(Schedulers.fromExecutorService(executorService), true)
-                .flatMap(i -> doSomething(i))
-                .doOnComplete(() -> System.out.println("The End is near"))
-                .doOnNext(result -> System.out.println(Thread.currentThread().getName() + " - Done with " + result))
-                .doOnComplete(() -> System.out.println("Done Execution"))
-                .blockLast();
-
-        System.out.println("Shutting down");
-        executorService.shutdown();
+        runSequential();
+        runParallel();
     }
 }
