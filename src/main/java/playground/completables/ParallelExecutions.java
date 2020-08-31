@@ -35,7 +35,7 @@ public class ParallelExecutions {
                 .map(entry -> CompletableFuture.supplyAsync(() -> {
                     System.out.println("I am Task #"+entry+" executed by: " +  Thread.currentThread().getName());
                     try {
-                        // TODO is Thread.sleep sending thread to background and contine with others?
+                        // TODO is Thread.sleep sending thread to background and continue with others?
                         Thread.sleep(30000);
                         System.out.println("Done with Task #"+entry+" executed by: " +  Thread.currentThread().getName());
                     } catch (InterruptedException e) {

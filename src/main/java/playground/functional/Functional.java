@@ -1,5 +1,9 @@
 package playground.functional;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 public class Functional {
 
     public static void main(String[] args) {
@@ -16,10 +20,14 @@ public class Functional {
 
 
         // now I use a functional interface implementation of a existing class
-        // and I a Method reference to the sayHi Method
+        // and use Method reference to the sayHi Method
         GreetingInterface g2 = GreetingUtil::sayHi;
-        String greeting2 = g.greet("Jane Doe");
+        String greeting2 = g2.greet("Jane Doe");
         System.out.println(greeting2);
+
+        // looping over list of names and print it with help of method reference
+        List<String> names = Arrays.asList("A", "B", "C");
+        names.stream().forEach(GreetingUtil::printGreeting);
     }
 
 }
