@@ -32,7 +32,7 @@ public class Compose {
 
         System.out.println("Waiting for Future: " +  Thread.currentThread().getName());
 
-        // it is not running on the given pool, runs on ForkJoin Common Pool
+        // it is not running on the given pool, runs on ForkJoin Common PoolCompose
         boolean result = future
             .thenComposeAsync((s) ->
                 CompletableFuture.supplyAsync(() -> {

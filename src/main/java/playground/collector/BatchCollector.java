@@ -27,14 +27,16 @@ public class BatchCollector<T> implements Collector<T, List<Batch<T>>, List<Batc
             @Override
             public void accept(List<Batch<T>> batches, T element) {
                 // initially empty
-                if (batches.size() == 0) {
-                    batches.add(new Batch<>(batchSize));
-                }
-                Batch batch = batches.get(batches.size() -1 );
-                if (!batch.tryAdd(element)) {
-                    batch = new Batch(batchSize);
-                    batch.tryAdd(element);
-                    batches.add(batch);
+                synchronized (batches) {
+                    if (batches.size() == 0) {
+                        batches.add(new Batch<>(batchSize));
+                    }
+                    Batch batch = batches.get(batches.size() - 1);
+                    if (!batch.tryAdd(element)) {
+                        batch = new Batch(batchSize);
+                        batch.tryAdd(element);
+                        batches.add(batch);
+                    }
                 }
             }
         };
@@ -55,6 +57,6 @@ public class BatchCollector<T> implements Collector<T, List<Batch<T>>, List<Batc
 
     @Override
     public Set<Characteristics> characteristics() {
-        return Collections.emptySet();
+        return new HashSet<>(Arrays.asList(Characteristics.CONCURRENT));
     }
 }
