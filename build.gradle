@@ -32,13 +32,13 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
 
     // https://mvnrepository.com/artifact/io.projectreactor/reactor-core
-    compile group: 'io.projectreactor', name: 'reactor-core', version: '3.4.3'
+    implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.3'
 
     // https://mvnrepository.com/artifact/com.microsoft.azure/azure-eventhubs
-    compile group: 'com.microsoft.azure', name: 'azure-eventhubs', version: '3.2.2'
+    implementation group: 'com.microsoft.azure', name: 'azure-eventhubs', version: '3.2.2'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
