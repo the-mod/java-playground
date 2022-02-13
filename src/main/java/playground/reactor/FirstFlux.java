@@ -1,5 +1,6 @@
 package playground.reactor;
 
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 import java.util.function.Consumer;
@@ -7,7 +8,7 @@ import java.util.function.Consumer;
 public class FirstFlux {
 
     public static Consumer<Integer> printConsumer() {
-        return (i -> System.out.println(i.toString()));
+        return (i -> System.out.println(i));
     }
 
     public static Consumer<Throwable> errorConsumer() {
@@ -21,7 +22,8 @@ public class FirstFlux {
     public static void main(String[] args) {
         Integer[] input = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
         Flux<Integer> flux = Flux.fromArray(input);
-        flux.map(i -> i * 2).subscribe(printConsumer(),errorConsumer(), completeConsumer());
+        Disposable disposable = flux.map(i -> i * 2).subscribe(printConsumer(), errorConsumer(), completeConsumer());
+        disposable.dispose();
     }
 }
 

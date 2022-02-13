@@ -34,8 +34,7 @@ public class Main {
             System.out.println(System.currentTimeMillis() + " - " + Thread.currentThread().getName() + " - Before Execution: " + service.getValue());
             service.doSomething();
             // Give first Thread some sleep to let the second Thread change the String Value but not leaving the Sync Method
-            // TODO: works correct only if Thread-0 was the first writing the String => How to ensure Thread-0 starts for Thread-1
-            if (Thread.currentThread().getName().equalsIgnoreCase("Thread-0")) {
+            if (Thread.currentThread().getName().equalsIgnoreCase("first")) {
                 try {
                     Thread.sleep(150);
                 } catch (InterruptedException e) {
@@ -55,28 +54,30 @@ public class Main {
     /**
      * Output:
      * <p>
-     * 1644510083110 - Thread-0 - Before Execution: initValue
-     * 1644510083110 - Thread-1 - Before Execution: initValue
-     * 1644510083128 - Thread-0 - Init: initValue
-     * 1644510083129 - Thread-0 - New Value: Thread-0
-     * 1644510084130 - Thread-0 - Leaving sync block
-     * 1644510084134 - Thread-1 - Init: Thread-0
-     * 1644510084134 - Thread-1 - New Value: Thread-1
-     * 1644510084297 - Thread-0 - After Execution: Thread-1         => Thread-0 reads new Value from Thread-1 even Thread-1 is still in the sync block
-     * 1644510085148 - Thread-1 - Leaving sync block
-     * 1644510085148 - Thread-1 - After Execution: Thread-1
-     * 1644510085807 - Thread-0 - After Sleep: Thread-1
-     * 1644510086648 - Thread-1 - After Sleep: Thread-1
+     * 1644768054110 - first - Before Execution: initValue
+     * 1644768054110 - second - Before Execution: initValue
+     * 1644768054130 - first - Init Value: initValue
+     * 1644768054130 - first - New Value: first
+     * 1644768055131 - first - Leaving sync block
+     * 1644768055135 - second - Init Value: first
+     * 1644768055135 - second - New Value: second
+     * 1644768055298 - first - After Execution: second  => Thread-0 reads new Value from Thread-1 even Thread-1 is still in the sync block
+     * 1644768056145 - second - Leaving sync block
+     * 1644768056145 - second - After Execution: second
+     * 1644768056806 - first - After Sleep: second
+     * 1644768057656 - second - After Sleep: second
      */
 
     public static void main(String[] args) {
         Main main = new Main();
         Main.MyThread t1 = main.new MyThread();
         t1.setDaemon(false);
+        t1.setName("first");
         t1.start();
 
         Main.MyThread t2 = main.new MyThread();
         t2.setDaemon(false);
+        t2.setName("second");
         t2.start();
     }
 }
