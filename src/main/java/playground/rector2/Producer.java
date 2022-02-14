@@ -31,6 +31,4 @@ public class Producer {
         t.setDaemon(false);
         t.start();
     }
-
-
 }
