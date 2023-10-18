@@ -35,7 +35,7 @@ dependencies {
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.10'
 
     // https://mvnrepository.com/artifact/io.projectreactor/reactor-core
-    implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.3'
+    implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.16'
 
     // https://mvnrepository.com/artifact/com.microsoft.azure/azure-eventhubs
     implementation group: 'com.microsoft.azure', name: 'azure-eventhubs', version: '3.2.2'
