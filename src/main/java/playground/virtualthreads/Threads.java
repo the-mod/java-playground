@@ -13,7 +13,6 @@ public class Threads {
                 System.out.println("Index: " + i);
             }
         };
-
         Thread vThread = Thread.ofVirtual().start(runnable);
         vThread.join();
     }
