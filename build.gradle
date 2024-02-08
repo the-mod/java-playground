@@ -23,6 +23,11 @@ plugins {
     id 'application'
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
@@ -37,11 +42,22 @@ dependencies {
     // https://mvnrepository.com/artifact/io.projectreactor/reactor-core
     implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.16'
 
-    // https://mvnrepository.com/artifact/com.microsoft.azure/azure-eventhubs
-    implementation group: 'com.microsoft.azure', name: 'azure-eventhubs', version: '3.2.2'
+    // https://mvnrepository.com/artifact/com.azure/azure-messaging-eventhubs
+    implementation group: 'com.azure', name: 'azure-messaging-eventhubs', version: '5.18.0'
 
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    // https://mvnrepository.com/artifact/io.reactivex.rxjava3/rxjava
+    implementation group: 'io.reactivex.rxjava3', name: 'rxjava', version: '3.1.8'
+    
+    //https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter/5.10.2
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+}
+
+tasks.withType(JavaCompile).each {
+    it.options.compilerArgs.add("--enable-preview")
+}
+
+tasks.withType(JavaExec).configureEach {
+    jvmArgs += "--enable-preview"
 }
 
 application {
